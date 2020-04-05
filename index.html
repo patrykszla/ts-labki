@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    
+    <form action="" method="get" id="form1">
+        <label for="fname">Imie:</label> <br>
+        <input type="text" id="fname" name="fname"> <br>
+
+        <label for="lname">Nazwisko:</label> <br>
+        <input type="text" id="lname" name="lname"> <br>
+
+        <label for="email">Email:</label> <br>
+        <input type="email" id="email" name="email"><br>
+
+        
+       
+        <label for="data">Data:</label><br>
+        <input type="date" id="data" name="data"> <br>
+        
+        <label for="course">Wybrany kierunek studiów:</label><br>
+        <select id="course" name="course">
+            <option value="informatics">Informatyka</option>
+            <option value="manegment">Zarządzanie</option>
+            <option value="informatics-eco">Informatyka i ekonometria</option>
+        </select> <br>
+        
+        <label for="">Czy preferujesz e-learning:</label> <br>
+        <label for="yes">Tak</label>
+        <input type="checkbox" name="yes" id="yes"> 
+        <label for="no">Nie</label>
+        <input type="checkbox" name="no" id="no"> <br>
+        
+        <label for="comments">Uwagi:</label> <br>
+        <textarea name="comments" id="comments" cols="30" rows="5"></textarea><br>
+        <button type="sumbmit">Wyslij</button>
+        
+    </form>
+    <div id="renderForm"></div>
+    
+</body>
+</html>
