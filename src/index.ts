@@ -5,8 +5,7 @@ enum FieldType {
     Email = 'email',
     Select = 'select',
     Checkbox = 'checkbox',
-    Data = 'date'
-   
+    Data = 'date'  
 }
 
 interface IField {
@@ -16,7 +15,6 @@ interface IField {
     value: string;
     render(): void;
 } 
-
 class FieldLabel {
     text: string;
     forId: string;
@@ -26,7 +24,6 @@ class FieldLabel {
         this.forId = forId;
         this.parent = parent;
     }
-
     render():HTMLLabelElement {
         const labelElement = <HTMLLabelElement>document.createElement('label');
         labelElement.htmlFor = this.forId;
@@ -35,23 +32,21 @@ class FieldLabel {
         return labelElement
     }
 }
-
 class InputField implements IField {
     name: string;
     label: string;
     type: FieldType;
     value: string;
-    constructor(name: string, label: string, type: FieldType, value: string) {
+    constructor(name: string, label: string, type: FieldType, value?: string) {
         this.name = name ? name : this.name;
         this.label = label ? label : this.label;
         this.type = type ? type : this.type;
         this.value = value? value : this.value;
     }
-
     getValue(): string {
-        return this.value
+        var inputVal = (<HTMLInputElement>document.getElementById(this.name)).value;
+        return inputVal
     }
-    
     render():HTMLInputElement {
         const wrapper = <HTMLDivElement>document.createElement('div');
         wrapper.className = ("form-div");
@@ -61,31 +56,25 @@ class InputField implements IField {
         inputElement.id = this.name;  
         inputElement.type = this.type;
         inputElement.value = this.value;
-        
-        
-        // var inputVal = inputElement.value;
         wrapper.append(inputElement);
-        // console.log(inputVal);
         return inputElement
     }
 }
-
 class TextAreaField implements IField {
     name: string;
     label: string;
     type: FieldType;
     value: string;
-    constructor(name:string, label: string, type:FieldType, value:string) {
+    constructor(name:string, label: string, type:FieldType, value?:string) {
         this.name = name;
         this.label = label;
         this.type = type;
         this.value = value ? value : "";
     }
-
     getValue(): string {
-        return this.value
+        var textAreaVal = (<HTMLTextAreaElement>document.getElementById(this.name)).value
+        return textAreaVal
     }
-
     render():HTMLTextAreaElement {
         const wrapper = <HTMLDivElement>document.createElement('div');
         wrapper.className = ("form-div");
@@ -95,27 +84,29 @@ class TextAreaField implements IField {
         textAreaElement.id = this.name;
         textAreaElement.value = this.value;
         wrapper.append(textAreaElement);
-        
         return textAreaElement
     }
 }
-
 class SelectField implements IField {
     name: string;
     label: string;
     type: FieldType;
     value: string;
-    constructor(name:string, label: string, type:FieldType, value: string) {
+    constructor(name:string, label: string, type:FieldType, value?: string) {
         this.name = name;
         this.label = label;
         this.type = type;
         this.value = value ? value : "";
     }
-
     getValue(): string {
-        return this.value
+        var selectValue = (<HTMLSelectElement>document.getElementById(this.name)).value;
+        if (selectValue == 'external') {
+            selectValue = "Tryb zaoczny";
+        } else {
+            selectValue = "Tryb dzienny";
+        }
+        return selectValue
     }
-
     render():HTMLDivElement {
         const wrapper = <HTMLDivElement>document.createElement('div');
         wrapper.className = ("form-div");
@@ -141,15 +132,21 @@ class CheckboxField implements IField {
     label: string;
     type: FieldType;
     value: string;
-    constructor(name:string, label: string, type: FieldType, value: string) {
+    constructor(name:string, label: string, type: FieldType, value?: string) {
         this.name = name;
         this.label = label;
         this.type = type;
-        this.value = value;
+        this.value = value ? value : "";
     }
-    
     getValue(): string {
-        return this.value;
+        var checkboxValue = (<HTMLInputElement>document.getElementById(this.name)).checked;
+        var checkboxString = ' '
+        if (checkboxValue == true) {
+            checkboxString = 'preferuje e-learning';
+        } else if (checkboxValue == false) {
+            checkboxString = 'nie preferuje e-learningu';
+        }
+        return checkboxString
     }
     render():HTMLDivElement {
         const wrapper = <HTMLDivElement>document.createElement('div');
@@ -161,127 +158,51 @@ class CheckboxField implements IField {
         checkbox.type = FieldType.Checkbox;
         checkbox.value = this.value;
         wrapper.append(checkbox);
-        // console.log(this.value);
         return wrapper;
     }
 }
-
-
-
 var valuesArr:string[] = [];
 
 class Form {
-    arrayOfFields = [new TextAreaField("text-area", "Uwagi: ", FieldType.TextArea, "Nie mam żadnych uwag"), 
-    new CheckboxField("checkbox", 'Czy preferujesz e-learning: ', FieldType.Checkbox, 'preferuje'), 
-    new SelectField("select-field", 'Tryb studiów do wyboru: ', FieldType.Select, 'zaocznie'),
-    new InputField("input-email","e-mail: ", FieldType.Email, "lorysek97@gmail.com"),
-    new InputField("input-surname", "Nazwisko: ", FieldType.Text, 'Szlachta'),
-    new InputField("input-name", "Imie: ", FieldType.Text, 'Patryk' )]
+    arrayOfFields = [new TextAreaField("text-area", "Uwagi: ", FieldType.TextArea, ' '), 
+    new CheckboxField("checkbox", 'Czy preferujesz e-learning: ', FieldType.Checkbox, ' '), 
+    new SelectField("select-field", 'Tryb studiów do wyboru: ', FieldType.Select, ' '),
+    new InputField("input-email","e-mail: ", FieldType.Email, ' '),
+    new InputField("input-surname", "Nazwisko: ", FieldType.Text, ' '),
+    new InputField("input-name", "Imie: ", FieldType.Text, ' ')]
     constructor(){}
 
     getValue():void {
-    //    for(var i = 0; i < this.arrayOfFields.length; i++) {
-    //        console.log(this.arrayOfFields[i].getValue);
-    //    }
+ 
     for (var i = 0; i < this.arrayOfFields.length; i++ ) {
         console.log(this.arrayOfFields[i].getValue());
+        var element = document.createElement("p");
+        element.innerText = (this.arrayOfFields[i].getValue());
+        document.getElementById('render-wrapper').after(element);
     }
-
-    
-        console.log('form getvalue()')
-       
-    //     for(var i = 0; i < this.arrayOfFields.length; i++) {
-    //         console.log(this.arrayOfFields[i].getValue);
-    //     }
-    //    })
-        
-        // document.getElementById('main-btn').addEventListener("click", function changeVal():void {
-        //     console.log(document.getElementsByClassName("form-div"));
-        //     var nameVal = (<HTMLInputElement>document.getElementById("input-name")).value;
-        //     valuesArr.push(nameVal);
-        //     var surnameVal = (<HTMLInputElement>document.getElementById("input-surname")).value;
-        //     valuesArr.push(surnameVal);
-        //     var emailVal = (<HTMLInputElement>document.getElementById("input-email")).value
-        //     valuesArr.push(emailVal);
-        //     var selectVal = (<HTMLSelectElement>document.getElementById('select-field')).value;
-        //     valuesArr.push(selectVal);
-        //     var checkBox = (<HTMLInputElement>document.getElementById('checkbox')).value;
-        //     valuesArr.push(checkBox);
-        //     var textAreaVal = (<HTMLTextAreaElement>document.getElementById('text-area')).value;
-        //     valuesArr.push(textAreaVal);
-        //     console.log(valuesArr);
-            
-
-        //     for (var i = 0; i<valuesArr.length; i++){
-        //         console.log(valuesArr[i]);
-        //         var newElement = document.createElement('p');
-        //         if (valuesArr[i] == 'external') {
-        //             valuesArr[i] = 'tryb zaoczny'
-        //         } else if ( valuesArr[i] == 'full-time') {
-        //             valuesArr[i] = 'tryb dzienny'
-        //         } else valuesArr[i]
-        //         newElement.innerText = valuesArr[i];
-        //         document.getElementById('render-wrapper').append(newElement);
-               
-        //     }
-        // })
-    }
-    
+}
     render():void {
-
-        
-        
         for (var i = 0; i < this.arrayOfFields.length; i++) {
             (this.arrayOfFields[i].render());
         }
 
-        // const textArea = new TextAreaField("text-area", "Uwagi: ", FieldType.TextArea, "Nie mam żadnych uwag").render();
-        // const checkbox = new CheckboxField("checkbox", 'Czy preferujesz e-learning: ', FieldType.Checkbox, 'preferuje').render();
-        // const selectBox = new SelectField("select-field", 'Tryb studiów do wyboru: ', FieldType.Select, '').render();
-        // const inputEmail = new InputField("input-email","e-mail: ", FieldType.Email, "lorysek97@gmail.com").render();
-        // const inputSurname = new InputField("input-surname", "Nazwisko: ", FieldType.Text, 'Szlachta').render();
-        // const inputName = new InputField("input-name", "Imie: ", FieldType.Text, 'Patryk' ).render();
     }
 }
-
-
 class App {
+
     constructor() {
         const newForm = new Form(); 
         newForm.render();
-        document.getElementById('main-btn').addEventListener('click', () => {
+        document.getElementById('submit').addEventListener('click', (event) => {
+            event.preventDefault();
             newForm.getValue();
         })
-        
-        
     }
-    
 }
-
 window.addEventListener('DOMContentLoaded', (event) => {
     const app = new App();
+    
 });
-// document.getElementById('main-btn').addEventListener("click", function changeVal():void {
-//     CheckboxField.
-// })
-
-// var checkBox = (<HTMLInputElement>document.getElementById('checkbox'));
-// //... You still need to do all the null checks as necessary
-// //The below check may be irrelevant depending upon what you are actually doing. 
-// //But i am just adding here to show that you need to refer to the property "type" and 
-// //not "InputType"
-// if (checkBox.checked == true) { 
-//      console.log('checked');
-// }
-
-
-
-
-// function check() {
-//     var myCheckbox = (<HTMLInputElement>document.getElementById("checkbox")).value;
-//     console.log(myCheckbox);
-// }
-// check();
 
 
 

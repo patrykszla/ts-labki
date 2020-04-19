@@ -29,7 +29,8 @@ class InputField {
         this.value = value ? value : this.value;
     }
     getValue() {
-        return this.value;
+        var inputVal = document.getElementById(this.name).value;
+        return inputVal;
     }
     render() {
         const wrapper = document.createElement('div');
@@ -52,7 +53,8 @@ class TextAreaField {
         this.value = value ? value : "";
     }
     getValue() {
-        return this.value;
+        var textAreaVal = document.getElementById(this.name).value;
+        return textAreaVal;
     }
     render() {
         const wrapper = document.createElement('div');
@@ -74,7 +76,14 @@ class SelectField {
         this.value = value ? value : "";
     }
     getValue() {
-        return this.value;
+        var selectValue = document.getElementById(this.name).value;
+        if (selectValue == 'external') {
+            selectValue = "Tryb zaoczny";
+        }
+        else {
+            selectValue = "Tryb dzienny";
+        }
+        return selectValue;
     }
     render() {
         const wrapper = document.createElement('div');
@@ -100,10 +109,18 @@ class CheckboxField {
         this.name = name;
         this.label = label;
         this.type = type;
-        this.value = value;
+        this.value = value ? value : "";
     }
     getValue() {
-        return this.value;
+        var checkboxValue = document.getElementById(this.name).checked;
+        var checkboxString = ' ';
+        if (checkboxValue == true) {
+            checkboxString = 'preferuje e-learning';
+        }
+        else if (checkboxValue == false) {
+            checkboxString = 'nie preferuje e-learningu';
+        }
+        return checkboxString;
     }
     render() {
         const wrapper = document.createElement('div');
@@ -121,18 +138,20 @@ class CheckboxField {
 var valuesArr = [];
 class Form {
     constructor() {
-        this.arrayOfFields = [new TextAreaField("text-area", "Uwagi: ", FieldType.TextArea, "Nie mam żadnych uwag"),
-            new CheckboxField("checkbox", 'Czy preferujesz e-learning: ', FieldType.Checkbox, 'preferuje'),
-            new SelectField("select-field", 'Tryb studiów do wyboru: ', FieldType.Select, 'zaocznie'),
-            new InputField("input-email", "e-mail: ", FieldType.Email, "lorysek97@gmail.com"),
-            new InputField("input-surname", "Nazwisko: ", FieldType.Text, 'Szlachta'),
-            new InputField("input-name", "Imie: ", FieldType.Text, 'Patryk')];
+        this.arrayOfFields = [new TextAreaField("text-area", "Uwagi: ", FieldType.TextArea, ' '),
+            new CheckboxField("checkbox", 'Czy preferujesz e-learning: ', FieldType.Checkbox, ' '),
+            new SelectField("select-field", 'Tryb studiów do wyboru: ', FieldType.Select, ' '),
+            new InputField("input-email", "e-mail: ", FieldType.Email, ' '),
+            new InputField("input-surname", "Nazwisko: ", FieldType.Text, ' '),
+            new InputField("input-name", "Imie: ", FieldType.Text, ' ')];
     }
     getValue() {
         for (var i = 0; i < this.arrayOfFields.length; i++) {
             console.log(this.arrayOfFields[i].getValue());
+            var element = document.createElement("p");
+            element.innerText = (this.arrayOfFields[i].getValue());
+            document.getElementById('render-wrapper').after(element);
         }
-        console.log('form getvalue()');
     }
     render() {
         for (var i = 0; i < this.arrayOfFields.length; i++) {
@@ -144,7 +163,8 @@ class App {
     constructor() {
         const newForm = new Form();
         newForm.render();
-        document.getElementById('main-btn').addEventListener('click', () => {
+        document.getElementById('submit').addEventListener('click', (event) => {
+            event.preventDefault();
             newForm.getValue();
         });
     }
